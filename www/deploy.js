@@ -8,32 +8,33 @@ module.exports = {
      *   - `callback` {Function} is triggered on completion
      *     - `data` {Object} is the configuration data
      */
+    config : {
+        load : function(callback) {
+            readFile('config.json', function(e, text) {
+                config = parseAsJSON(text);
 
-    config.load : function(callback) {
-        readFile('config.json', function(e, text) {
-            config = parseAsJSON(text);
+                // load defaults
+                config.address = config.address || '127.0.0.1:3000';
 
-            // load defaults
-            config.address = config.address || '127.0.0.1:3000';
+                callback(config);
+            });
+        },
 
-            callback(config);
-        });
+        /**
+         * Save Configuration.
+         *
+         * Options:
+         *   - `data` {Object} is the data to save to the config file.
+         *   - `callback` {Function} is triggered on completion.
+         */
+
+        save : function(data, callback) {
+            saveFile('config.json', data, function(e) {
+                callback();
+            });
+        }
     },
-
-    /**
-     * Save Configuration.
-     *
-     * Options:
-     *   - `data` {Object} is the data to save to the config file.
-     *   - `callback` {Function} is triggered on completion.
-     */
-
-    config.save : function(data, callback) {
-        saveFile('config.json', data, function(e) {
-            callback();
-        });
-    },
-
+    
     /*!
      * Configuration helper functions.
      */
