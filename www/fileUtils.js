@@ -18,7 +18,7 @@ module.exports = {
         var fileListCopy = fileList.splice(0);
         (function copyOne(){
             var file = fileListCopy.splice(0, 1)[0];
-            copyFile(file, destEntry,
+            window.phonegap.app.fileUtils.copyFile(file, destEntry,
                 function(){
                     if(fileListCopy.length==0){
                         success();
@@ -50,8 +50,8 @@ module.exports = {
 
     copyFile : function(filePath, destinationDirectoryEntry, success, error){
         var relativePathToFile = filePath;
-        var absolutePathToFile = getPathToWWWDir() + relativePathToFile;
-        createPath(destinationDirectoryEntry, relativePathToFile, function(e) {
+        var absolutePathToFile = window.phonegap.app.fileUtils.getPathToWWWDir() + relativePathToFile;
+        window.phonegap.app.fileUtils.createPath(destinationDirectoryEntry, relativePathToFile, function(e) {
                 destinationDirectoryEntry.getFile(relativePathToFile, {create: true},
                     function(newFile) {
                         console.log('[fileUtils] successfully CREATED the new file: [' + newFile.name + ']');
