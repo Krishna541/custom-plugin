@@ -152,9 +152,7 @@ module.exports = {
 
                                 var localFiles = [
                                     'cordova.js',
-                                    'cordova_plugins.js',
-                                    'js/deploy.js',
-                                    'js/fileUtils.js'
+                                    'cordova_plugins.js'
                                 ];
 
                                 for(var i = 0; i < plugins.length; i++){
