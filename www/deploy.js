@@ -10,7 +10,7 @@ module.exports = {
      */
     config : {
         load : function(callback) {
-            window.phoengap.app.config.readFile('config.json', function(e, text) {
+            window.phonegap.app.config.readFile('config.json', function(e, text) {
                 config = config.parseAsJSON(text);
 
                 // load defaults
