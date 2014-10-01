@@ -10,8 +10,8 @@ module.exports = {
      */
     config : {
         load : function(callback) {
-            readFile('config.json', function(e, text) {
-                config = parseAsJSON(text);
+            config.readFile('config.json', function(e, text) {
+                config = config.parseAsJSON(text);
 
                 // load defaults
                 config.address = config.address || '127.0.0.1:3000';
@@ -29,7 +29,7 @@ module.exports = {
          */
 
         save : function(data, callback) {
-            saveFile('config.json', data, function(e) {
+            config.saveFile('config.json', data, function(e) {
                 callback();
             });
         },
