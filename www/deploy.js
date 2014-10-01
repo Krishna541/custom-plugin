@@ -32,94 +32,94 @@ module.exports = {
             saveFile('config.json', data, function(e) {
                 callback();
             });
+        },
+        
+        /*!
+         * Configuration helper functions.
+         */
+
+        readFile : function(filepath, callback) {
+            window.requestFileSystem(
+                LocalFileSystem.PERSISTENT,
+                0,
+                function(fileSystem) {
+                    fileSystem.root.getFile(
+                        filepath,
+                        null,
+                        function gotFileEntry(fileEntry) {
+                            fileEntry.file(
+                                function gotFile(file){
+                                    var reader = new FileReader();
+                                    reader.onloadend = function(evt) {
+                                        // #72 - Fix WP8 loading of config.json
+                                        // On WP8, `evt.target.result` is returned as an object instead
+                                        // of a string. Since WP8 is using a newer version of the File API
+                                        // this may be a platform quirk or an API update.
+                                        var text = evt.target.result;
+                                        text = (typeof text === 'object') ? JSON.stringify(text) : text;
+                                        callback(null, text); // text is a string
+                                    };
+                                    reader.readAsText(file);
+                                },
+                                function(error) {
+                                    callback(error);
+                                }
+                            );
+                        },
+                        function(error) {
+                            callback(error);
+                        }
+                    );
+                },
+                function(error) {
+                    callback(error);
+                }
+            );
+        },
+
+        saveFile : function(filepath, data, callback) {
+            data = (typeof data === 'string') ? data : JSON.stringify(data);
+
+            window.requestFileSystem(
+                LocalFileSystem.PERSISTENT,
+                0,
+                function(fileSystem) {
+                    fileSystem.root.getFile(
+                        filepath,
+                        { create: true, exclusive: false },
+                        function(fileEntry) {
+                            fileEntry.createWriter(
+                                function(writer) {
+                                    writer.onwriteend = function(evt) {
+                                        callback();
+                                    };
+                                    writer.write(data);
+                                },
+                                function(e) {
+                                    callback(e);
+                                }
+                            );
+                        },
+                        function(e) {
+                            callback(e);
+                        }
+                    );
+                },
+                function(e) {
+                    callback(e);
+                }
+            );
+        },
+
+        parseAsJSON : function(text) {
+            try {
+                return JSON.parse(text);
+            } catch(e) {
+                return {};
+            }
         }
     },
     
-    /*!
-     * Configuration helper functions.
-     */
-
-    readFile : function(filepath, callback) {
-        window.requestFileSystem(
-            LocalFileSystem.PERSISTENT,
-            0,
-            function(fileSystem) {
-                fileSystem.root.getFile(
-                    filepath,
-                    null,
-                    function gotFileEntry(fileEntry) {
-                        fileEntry.file(
-                            function gotFile(file){
-                                var reader = new FileReader();
-                                reader.onloadend = function(evt) {
-                                    // #72 - Fix WP8 loading of config.json
-                                    // On WP8, `evt.target.result` is returned as an object instead
-                                    // of a string. Since WP8 is using a newer version of the File API
-                                    // this may be a platform quirk or an API update.
-                                    var text = evt.target.result;
-                                    text = (typeof text === 'object') ? JSON.stringify(text) : text;
-                                    callback(null, text); // text is a string
-                                };
-                                reader.readAsText(file);
-                            },
-                            function(error) {
-                                callback(error);
-                            }
-                        );
-                    },
-                    function(error) {
-                        callback(error);
-                    }
-                );
-            },
-            function(error) {
-                callback(error);
-            }
-        );
-    },
-
-    saveFile : function(filepath, data, callback) {
-        data = (typeof data === 'string') ? data : JSON.stringify(data);
-
-        window.requestFileSystem(
-            LocalFileSystem.PERSISTENT,
-            0,
-            function(fileSystem) {
-                fileSystem.root.getFile(
-                    filepath,
-                    { create: true, exclusive: false },
-                    function(fileEntry) {
-                        fileEntry.createWriter(
-                            function(writer) {
-                                writer.onwriteend = function(evt) {
-                                    callback();
-                                };
-                                writer.write(data);
-                            },
-                            function(e) {
-                                callback(e);
-                            }
-                        );
-                    },
-                    function(e) {
-                        callback(e);
-                    }
-                );
-            },
-            function(e) {
-                callback(e);
-            }
-        );
-    },
-
-    parseAsJSON : function(text) {
-        try {
-            return JSON.parse(text);
-        } catch(e) {
-            return {};
-        }
-    },
-
     /**
      * Download, Extract, and Deploy App.
      *
