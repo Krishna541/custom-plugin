@@ -11,7 +11,7 @@ module.exports = {
     config : {
         load : function(callback) {
             window.phonegap.app.config.readFile('config.json', function(e, text) {
-                config = config.parseAsJSON(text);
+                config = window.phonegap.app.config.parseAsJSON(text);
 
                 // load defaults
                 config.address = config.address || '127.0.0.1:3000';
