@@ -28,7 +28,9 @@
     <license>Apache 2.0</license>
     <keywords>cordova,phonegap</keywords>
     <repo>https://github.com/timkim/phonegap-plugin-content-sync</repo>
-
+    <dependency id="org.apache.cordova.file-transfer" version=">=0.4.4" />
+    <dependency id="org.apache.cordova.file" version=">=1.0.1" />   
+    
     <js-module src="www/deploy.js" name="deploy">
         <clobbers target="window.phonegap.app" />
     </js-module>
