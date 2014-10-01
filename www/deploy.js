@@ -9,7 +9,7 @@ module.exports = {
      *     - `data` {Object} is the configuration data
      */
 
-    load : function(callback) {
+    config.load : function(callback) {
         readFile('config.json', function(e, text) {
             config = parseAsJSON(text);
 
@@ -28,7 +28,7 @@ module.exports = {
      *   - `callback` {Function} is triggered on completion.
      */
 
-    save : function(data, callback) {
+    config.save : function(data, callback) {
         saveFile('config.json', data, function(e) {
             callback();
         });
