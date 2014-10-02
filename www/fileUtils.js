@@ -21,7 +21,7 @@ module.exports = {
             window.phonegap.app.fileUtils.copyFile(file, destEntry,
                 function(){
                     if(fileListCopy.length==0){
-                        success();
+                        success();                
                     }else{
                         copyOne();
                     }
@@ -51,7 +51,7 @@ module.exports = {
     copyFile : function(filePath, destinationDirectoryEntry, success, error){
         var relativePathToFile = filePath;
         var absolutePathToFile = window.phonegap.app.fileUtils.getPathToWWWDir() + relativePathToFile;
-        window.phonegap.app.fileUtils.createPath(destinationDirectoryEntry, relativePathToFile, function(e) {
+        window.phonegap.app.fileUtils.createPath(destinationDirectoryEntry, relativePathToFile, function() {
                 destinationDirectoryEntry.getFile(relativePathToFile, {create: true},
                     function(newFile) {
                         console.log('[fileUtils] successfully CREATED the new file: [' + newFile.name + ']');
@@ -66,10 +66,10 @@ module.exports = {
                                 console.log('[fileUtils] successfully COPIED the new file: [' + newFile.name + ']');
                                 success();
                             },
-                            function(error) {
+                            function(e) {
                                 console.log('[fileUtils][ERROR] failed to COPY the new file: [' + relativePathToFile +
-                                    '] error code: [' + error.code + '] source: [' + error.source +
-                                    '] target: [' + error.target + '] http_status: [' + error.http_status + ']');
+                                    '] error code: [' + e.code + '] source: [' + e.source +
+                                    '] target: [' + e.target + '] http_status: [' + e.http_status + ']');
                                 error();
                             }
                         );
@@ -81,27 +81,33 @@ module.exports = {
             });
     },
 
-    createPath : function(entry, filename, callback) {
+    createPath : function(entry, filename, success) {
         var parentDirectories = filename.split("/");
         if (parentDirectories.length === 1) {
             // There are no directories in this path
-            callback();
-        }
-        else {
-            for (var i = 0, l = parentDirectories.length - 1; i < l; ++i) {
-                (function () { // Create a closure for the path variable to be correct when logging it
-                    var path = parentDirectories.slice(0, i+1).join("/");
+            success();
+        }else{
+            var counter = 0;
+            var path;
+            (function createDir(){
+                if(counter < parentDirectories.length-1){        
+                    path = parentDirectories.slice(0, counter+1).join("/");
+                    counter++;
+
                     entry.getDirectory(path, { create: true, exclusive: true },
                         function () {
                             console.log("[fileUtils] Created directory " + path);
-                            callback();
+                            createDir();
                         },
                         function(error) {
                             // error in this case means the directory already exists.
-                            callback(error);
-                        });
-                })();
-            }
+                            console.log("[fileUtils] directory path exists at " + path);
+                            createDir();
+                    });
+                }else{
+                    success();
+                }
+            })();
         }
     }
 }
